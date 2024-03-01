@@ -16,12 +16,10 @@ class AuthService {
   }
 
   // create a new account with email and password
-  Future<UserModel?> createAccount(String email, String password) async {
+  Future<void> createAccount(String email, String password) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      User? user = result.user;
-      return _userFromFirebaseUser(user);
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
         case 'weak-password':
@@ -37,12 +35,9 @@ class AuthService {
   }
 
   // sign in with email and password
-  Future<UserModel?> signIn(String email, String password) async {
+  Future<void> signIn(String email, String password) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      User? user = result.user;
-      return _userFromFirebaseUser(user);
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
         case 'user-not-found':
