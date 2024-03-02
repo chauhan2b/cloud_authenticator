@@ -2,9 +2,9 @@ import 'package:cloud_authenticator/routes/app_router.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
-  final _appRouter = AppRouter();
-
   App({super.key});
+
+  final _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
