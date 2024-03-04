@@ -38,7 +38,6 @@ class FirebaseAuth extends _$FirebaseAuth {
 
   Future<void> signOut() async {
     final authService = ref.read(authServiceProvider);
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => authService.signOut());
+    return await authService.signOut();
   }
 }
