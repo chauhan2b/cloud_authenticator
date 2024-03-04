@@ -17,6 +17,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool _isSigningIn = true;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -26,6 +28,33 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final firebaseAuth = ref.read(firebaseAuthProvider.notifier);
+
+    Future<void> signIn(String email, String password) async {
+      await firebaseAuth.signIn(email, password);
+    }
+
+    Future<void> createAccount(String email, String password) async {
+      await firebaseAuth.createAccount(email, password);
+    }
+
+    Future<void> authenticate(String email, String password) async {
+      if (_formKey.currentState!.validate()) {
+        try {
+          _isSigningIn
+              ? await signIn(email, password)
+              : await createAccount(email, password);
+
+          if (context.mounted) {
+            context.router.replaceNamed('/home');
+          }
+        } catch (error) {
+          // ignore: avoid_print
+          print(error);
+        }
+      }
+    }
+
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -37,58 +66,59 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               child: TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(label: Text('Email')),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
                 controller: _passwordController,
+                obscureText: true,
                 decoration: const InputDecoration(label: Text('Password')),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  } else if (value.length < 6) {
+                    return 'Password must be at least 6 characters long';
+                  }
+                  return null;
+                },
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await ref
-                      .read(firebaseAuthProvider.notifier)
-                      .signIn('test@test.com', '123456');
-
-                  if (context.mounted) {
-                    context.router.replaceNamed('/home');
-                  }
-                } catch (error) {
-                  // ignore: avoid_print
-                  print(error);
-                }
-              },
-              child: const Text('Sign in'),
-            ),
+            _isSigningIn
+                ? ElevatedButton(
+                    onPressed: () async {
+                      await authenticate(
+                        _emailController.text.trim(),
+                        _passwordController.text.trim(),
+                      );
+                    },
+                    child: const Text('Sign in'),
+                  )
+                : ElevatedButton(
+                    onPressed: () async {
+                      await authenticate(
+                        _emailController.text.trim(),
+                        _passwordController.text.trim(),
+                      );
+                    },
+                    child: const Text('Register'),
+                  ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await ref
-                      .read(firebaseAuthProvider.notifier)
-                      .createAccount('test@test.com', '123456');
-
-                  if (context.mounted) {
-                    context.router.replaceNamed('/home');
-                  }
-                } catch (error) {
-                  // ignore: avoid_print
-                  print(error);
-                }
-              },
-              child: const Text('Register'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
+            TextButton(
               onPressed: () {
-                final authState = ref.read(authStateProvider);
-                // ignore: avoid_print
-                print(authState.value.toString());
+                setState(() {
+                  _isSigningIn = !_isSigningIn;
+                });
               },
-              child: const Text('Get Auth State'),
+              child: _isSigningIn
+                  ? const Text('Don\'t have an account? Register')
+                  : const Text('Already have an account? Sign in'),
             ),
           ],
         ),
