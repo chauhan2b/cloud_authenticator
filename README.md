@@ -1,3 +1,3 @@
-# cloud_authenticator
+# Cloud Authenticator
 
-A new Flutter project.
+An authenticator app which saves your auth codes to the cloud.
