@@ -90,25 +90,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 },
               ),
             ),
-            _isSigningIn
-                ? ElevatedButton(
-                    onPressed: () async {
-                      await authenticate(
-                        _emailController.text.trim(),
-                        _passwordController.text.trim(),
-                      );
-                    },
-                    child: const Text('Sign in'),
-                  )
-                : ElevatedButton(
-                    onPressed: () async {
-                      await authenticate(
-                        _emailController.text.trim(),
-                        _passwordController.text.trim(),
-                      );
-                    },
-                    child: const Text('Register'),
-                  ),
+            ElevatedButton(
+              onPressed: () async {
+                await authenticate(
+                  _emailController.text.trim(),
+                  _passwordController.text.trim(),
+                );
+              },
+              child:
+                  _isSigningIn ? const Text('Sign In') : const Text('Register'),
+            ),
             const SizedBox(height: 10),
             TextButton(
               onPressed: () {
