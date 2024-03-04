@@ -55,6 +55,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       }
     }
 
+    // listen for changes in the authentication state and display an error dialog
     ref.listen<AsyncValue>(firebaseAuthProvider, (_, state) {
       if (!state.isLoading && state.hasError) {
         showDialog(
