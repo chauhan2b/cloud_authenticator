@@ -27,10 +27,10 @@ class AuthService {
         case 'email-already-in-use':
           throw Exception('The account already exists for that email.');
         default:
-          throw Exception('Error: ${error.message}');
+          throw Exception(error.message);
       }
     } catch (error) {
-      throw Exception('Error: $error');
+      throw Exception(error);
     }
   }
 
@@ -45,10 +45,10 @@ class AuthService {
         case 'wrong-password':
           throw Exception('Wrong password provided for that user.');
         default:
-          throw Exception('Error: ${error.message}');
+          throw Exception(error.message);
       }
     } catch (error) {
-      throw Exception('Error: $error');
+      throw Exception(error);
     }
   }
 
@@ -57,7 +57,7 @@ class AuthService {
     try {
       await _auth.signOut();
     } catch (error) {
-      throw Exception('Error: $error');
+      throw Exception(error);
     }
   }
 }
