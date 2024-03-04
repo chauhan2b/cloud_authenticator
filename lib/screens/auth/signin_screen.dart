@@ -113,6 +113,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 },
               ),
             ),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
                 await authenticate(
