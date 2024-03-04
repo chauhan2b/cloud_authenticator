@@ -9,6 +9,19 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Future<void> signOut() async {
+      try {
+        await ref.read(firebaseAuthProvider.notifier).signOut();
+
+        if (context.mounted) {
+          context.router.replaceNamed('/sign-in');
+        }
+      } catch (error) {
+        // ignore: avoid_print
+        print(error);
+      }
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -17,18 +30,7 @@ class HomeScreen extends ConsumerWidget {
           children: [
             const Text("Home Screen"),
             TextButton(
-              onPressed: () async {
-                try {
-                  await ref.read(firebaseAuthProvider.notifier).signOut();
-
-                  if (context.mounted) {
-                    context.router.replaceNamed('/sign-in');
-                  }
-                } catch (error) {
-                  // ignore: avoid_print
-                  print(error);
-                }
-              },
+              onPressed: signOut,
               child: const Text('Sign Out'),
             ),
           ],
