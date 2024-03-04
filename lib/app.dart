@@ -11,6 +11,7 @@ class MyApp extends ConsumerWidget {
     final authGuard = ref.read(authGuardProvider);
     final appRouter = ref.read(appRouterProvider(authGuard));
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: appRouter.config(),
     );
   }
