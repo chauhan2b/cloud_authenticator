@@ -23,18 +23,17 @@ class HomeScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text("Home Screen"),
-            TextButton(
-              onPressed: signOut,
-              child: const Text('Sign Out'),
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: const Text('Home Screen'),
+        actions: [
+          IconButton(
+            onPressed: signOut,
+            icon: const Icon(Icons.exit_to_app),
+          ),
+        ],
+      ),
+      body: const Center(
+        child: Text("Your auth codes will appear here."),
       ),
     );
   }
