@@ -47,19 +47,37 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                ref
-                    .read(firebaseAuthProvider.notifier)
-                    .signIn('test@test.com', '123456');
+              onPressed: () async {
+                try {
+                  await ref
+                      .read(firebaseAuthProvider.notifier)
+                      .signIn('test@test.com', '123456');
+
+                  if (context.mounted) {
+                    context.router.replaceNamed('/home');
+                  }
+                } catch (error) {
+                  // ignore: avoid_print
+                  print(error);
+                }
               },
               child: const Text('Sign in'),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                ref
-                    .read(firebaseAuthProvider.notifier)
-                    .createAccount('test@test.com', '123456');
+              onPressed: () async {
+                try {
+                  await ref
+                      .read(firebaseAuthProvider.notifier)
+                      .createAccount('test@test.com', '123456');
+
+                  if (context.mounted) {
+                    context.router.replaceNamed('/home');
+                  }
+                } catch (error) {
+                  // ignore: avoid_print
+                  print(error);
+                }
               },
               child: const Text('Register'),
             ),
@@ -67,6 +85,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             ElevatedButton(
               onPressed: () {
                 final authState = ref.read(authStateProvider);
+                // ignore: avoid_print
                 print(authState.value.toString());
               },
               child: const Text('Get Auth State'),
