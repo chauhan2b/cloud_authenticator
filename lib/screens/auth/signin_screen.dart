@@ -55,6 +55,28 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       }
     }
 
+    ref.listen<AsyncValue>(firebaseAuthProvider, (_, state) {
+      if (!state.isLoading && state.hasError) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text(state.error.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    context.router.pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    });
+
     return Scaffold(
       body: Form(
         key: _formKey,

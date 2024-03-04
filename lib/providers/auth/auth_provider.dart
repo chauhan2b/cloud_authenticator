@@ -25,16 +25,20 @@ class FirebaseAuth extends _$FirebaseAuth {
 
   Future<void> createAccount(String email, String password) async {
     final authService = ref.read(authServiceProvider);
-    return await authService.createAccount(email, password);
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(
+        () => authService.createAccount(email, password));
   }
 
   Future<void> signIn(String email, String password) async {
     final authService = ref.read(authServiceProvider);
-    return await authService.signIn(email, password);
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() => authService.signIn(email, password));
   }
 
   Future<void> signOut() async {
     final authService = ref.read(authServiceProvider);
-    return await authService.signOut();
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() => authService.signOut());
   }
 }
