@@ -3,7 +3,6 @@ import 'package:cloud_authenticator/providers/totp/totp_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:otp/otp.dart';
 
 @RoutePage()
 class QRViewScreen extends ConsumerStatefulWidget {
@@ -56,15 +55,6 @@ class _QRViewScreenState extends ConsumerState<QRViewScreen> {
                       );
 
                       break;
-
-                      // final totp = OTP.generateTOTPCodeString(
-                      //   barcode.rawValue!,
-                      //   DateTime.now().millisecondsSinceEpoch,
-                      //   algorithm: Algorithm.SHA1,
-                      //   length: 6,
-                      //   interval: 30,
-                      //   isGoogle: false,
-                      // );
                     }
                   }
                 },
