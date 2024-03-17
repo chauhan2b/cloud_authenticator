@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_authenticator/providers/totp/totp_provider.dart';
 import 'package:cloud_authenticator/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/auth/auth_provider.dart';
+import '../../providers/totp/secret_provider.dart';
 
 @RoutePage()
 class HomeScreen extends ConsumerWidget {
@@ -12,7 +12,8 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final totpsAsync = ref.watch(totpProvider);
+    final secretsFuture = ref.watch(secretProvider);
+    const secret = 'secret';
 
     Future<void> signOut() async {
       try {
@@ -33,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {
-              ref.read(totpProvider.notifier).addTOTP('123456');
+              ref.read(secretProvider.notifier).addSecret(secret);
             },
             icon: const Icon(Icons.add),
           ),
@@ -43,16 +44,27 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: totpsAsync.when(
-        data: (totps) => totps.isEmpty
+      body: secretsFuture.when(
+        data: (secrets) => secrets.isEmpty
             ? const Center(
                 child: Text('Your authentication codes will appear here'),
               )
             : ListView.builder(
-                itemCount: totps.length,
-                itemBuilder: (context, index) => ListTile(
-                  title: Text(totps[index]),
-                ),
+                itemCount: secrets.length,
+                itemBuilder: (context, index) {
+                  final secret = secrets[index];
+                  return ListTile(
+                    title: Text(secret.secret),
+                    trailing: IconButton(
+                      onPressed: () {
+                        ref
+                            .read(secretProvider.notifier)
+                            .removeSecret(secret.id);
+                      },
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                    ),
+                  );
+                },
               ),
         error: (error, stackTrace) => Center(
           child: Text(error.toString()),
