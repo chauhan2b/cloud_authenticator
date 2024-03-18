@@ -1,3 +1,4 @@
+import 'package:cloud_authenticator/constants/shared_prefs_keys.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -10,7 +11,7 @@ part 'secret_provider.g.dart';
 
 @riverpod
 class Secret extends _$Secret {
-  final _uid = FirebaseAuth.instance.currentUser?.uid;
+  final _uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
   final _firestore = FirebaseFirestore.instance;
 
   // local list of secrets
@@ -20,7 +21,7 @@ class Secret extends _$Secret {
   Future<void> _saveSecretsToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     final secretsString = jsonEncode(_secrets.map((e) => e.toJson()).toList());
-    await prefs.setString('secrets', secretsString);
+    await prefs.setString(_uid + SharedPrefsKeys.secretKey, secretsString);
   }
 
   // fetch secrets from firestore
@@ -28,7 +29,7 @@ class Secret extends _$Secret {
     try {
       // try loading from shared preferences
       final prefs = await SharedPreferences.getInstance();
-      final secretsString = prefs.getString('secrets');
+      final secretsString = prefs.getString(_uid + SharedPrefsKeys.secretKey);
       if (secretsString != null) {
         final List<dynamic> secretsJson = jsonDecode(secretsString);
         _secrets = secretsJson.map((e) => SecretKey.fromJson(e)).toList();
