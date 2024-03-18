@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_authenticator/providers/totp/secret_provider.dart';
 import 'package:cloud_authenticator/providers/totp/totp_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,8 +42,8 @@ class _QRViewScreenState extends ConsumerState<QRViewScreen> {
                       lastBarcode = barcode.rawValue;
                       // add the barcode value to firebase
                       ref
-                          .read(totpProvider.notifier)
-                          .addTOTP(barcode.rawValue!);
+                          .read(secretProvider.notifier)
+                          .addSecret(barcode.rawValue!);
 
                       // go back to the home screen
                       context.router.back();
