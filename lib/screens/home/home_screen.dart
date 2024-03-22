@@ -54,7 +54,7 @@ class HomeScreen extends ConsumerWidget {
                 itemCount: secrets.length,
                 itemBuilder: (context, index) {
                   final secret = secrets[index];
-                  final totp = ref.read(totpProvider(secret));
+                  final totp = ref.read(totpProvider(secret.key));
                   return ListTile(
                     title: Text(totp.code),
                     subtitle: Text(totp.issuer),

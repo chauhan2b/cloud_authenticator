@@ -1,7 +1,6 @@
 import 'package:otp/otp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../models/secret_key.dart';
 import '../../models/totp.dart';
 
 part 'totp_provider.g.dart';
@@ -9,8 +8,8 @@ part 'totp_provider.g.dart';
 @riverpod
 class Totp extends _$Totp {
   @override
-  TOTP build(SecretKey secret) {
-    return _generateTOTP(secret.key);
+  TOTP build(String secret) {
+    return _generateTOTP(secret);
   }
 
   TOTP _generateTOTP(String secret) {
