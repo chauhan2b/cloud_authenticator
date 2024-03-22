@@ -46,7 +46,7 @@ class Secret extends _$Secret {
       // update local list
       _secrets = snapshot.docs
           .map((doc) => SecretKey(
-                secret: doc['secret'] as String,
+                key: doc['secret'] as String,
                 id: doc.id,
               ))
           .toList();
@@ -72,7 +72,7 @@ class Secret extends _$Secret {
         .add({'secret': secret});
 
     // add to local list
-    _secrets.add(SecretKey(secret: secret, id: docRef.id));
+    _secrets.add(SecretKey(key: secret, id: docRef.id));
 
     // update state
     state = AsyncValue.data(_secrets);

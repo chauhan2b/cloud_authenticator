@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/auth/auth_provider.dart';
 import '../../providers/totp/secret_provider.dart';
+import '../../providers/totp/totp_provider.dart';
 
 @RoutePage()
 class HomeScreen extends ConsumerWidget {
@@ -53,8 +54,10 @@ class HomeScreen extends ConsumerWidget {
                 itemCount: secrets.length,
                 itemBuilder: (context, index) {
                   final secret = secrets[index];
+                  final totp = ref.read(totpProvider(secret));
                   return ListTile(
-                    title: Text(secret.secret),
+                    title: Text(totp.code),
+                    subtitle: Text(totp.issuer),
                     trailing: IconButton(
                       onPressed: () {
                         ref

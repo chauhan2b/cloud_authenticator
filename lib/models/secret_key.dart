@@ -6,7 +6,7 @@ part 'secret_key.freezed.dart';
 @freezed
 class SecretKey with _$SecretKey {
   const factory SecretKey({
-    required String secret,
+    required String key,
     required String id,
   }) = _SecretKey;
 
