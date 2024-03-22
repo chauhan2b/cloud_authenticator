@@ -1,10 +1,10 @@
-import 'package:cloud_authenticator/constants/shared_prefs_keys.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import '../../constants/shared_prefs_keys.dart';
 import '../../models/secret_key.dart';
 
 part 'secret_provider.g.dart';

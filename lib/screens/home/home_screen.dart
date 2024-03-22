@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_authenticator/providers/totp/timer_state_provider.dart';
 import 'package:cloud_authenticator/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,13 +9,24 @@ import '../../providers/totp/secret_provider.dart';
 import '../../providers/totp/totp_provider.dart';
 
 @RoutePage()
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(timerStateProvider.notifier).startTimer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final secretsFuture = ref.watch(secretProvider);
-    const secret = 'secret';
+    final remainingTime = ref.watch(timerStateProvider).toString();
 
     Future<void> signOut() async {
       try {
@@ -34,12 +46,6 @@ class HomeScreen extends ConsumerWidget {
         title: const Text('Home Screen'),
         actions: [
           IconButton(
-            onPressed: () {
-              ref.read(secretProvider.notifier).addSecret(secret);
-            },
-            icon: const Icon(Icons.add),
-          ),
-          IconButton(
             onPressed: signOut,
             icon: const Icon(Icons.exit_to_app),
           ),
@@ -58,6 +64,7 @@ class HomeScreen extends ConsumerWidget {
                   return ListTile(
                     title: Text(totp.code),
                     subtitle: Text(totp.issuer),
+                    leading: Text(remainingTime),
                     trailing: IconButton(
                       onPressed: () {
                         ref
