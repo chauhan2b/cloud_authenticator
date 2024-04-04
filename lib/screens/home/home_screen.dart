@@ -46,11 +46,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: const Text('Home Screen'),
         actions: [
           IconButton(
-            onPressed: () => ref.read(secretProvider.notifier).addSecret(
-                'otpauth://totp/Reddit:unrealklaus?secret=VEBA6TIF6BCLBXOCXVCIKNAJ6G7ESHPZ&issuer=Reddit'),
-            icon: const Icon(Icons.add),
-          ),
-          IconButton(
             onPressed: signOut,
             icon: const Icon(Icons.exit_to_app),
           ),
