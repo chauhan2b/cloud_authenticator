@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cloud_authenticator/providers/totp/secret_provider.dart';
+import 'package:cloud_authenticator/providers/totp/totp_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'timer_state_provider.g.dart';
@@ -18,8 +18,8 @@ class TimerState extends _$TimerState {
       if (state > 1) {
         state--;
       } else {
-        // refresh provider and reset the timer
-        ref.invalidate(secretProvider);
+        // refresh totp provider and reset the timer
+        ref.invalidate(totpProvider);
         state = 30;
       }
     });

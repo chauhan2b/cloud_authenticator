@@ -9,7 +9,7 @@ import '../../models/secret_key.dart';
 
 part 'secret_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Secret extends _$Secret {
   final _uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
   final _firestore = FirebaseFirestore.instance;

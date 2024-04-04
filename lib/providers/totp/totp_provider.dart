@@ -5,7 +5,7 @@ import '../../models/totp.dart';
 
 part 'totp_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Totp extends _$Totp {
   @override
   TOTP build(String secret) {
@@ -14,9 +14,10 @@ class Totp extends _$Totp {
 
   TOTP _generateTOTP(String secret) {
     final uri = Uri.parse(secret);
-    return TOTP(
+
+    final val = TOTP(
       code: OTP.generateTOTPCodeString(
-        secret,
+        uri.queryParameters['secret'] ?? 'none',
         DateTime.now().millisecondsSinceEpoch,
         algorithm: Algorithm.SHA1,
         interval: 30,
@@ -28,5 +29,10 @@ class Totp extends _$Totp {
           ? uri.pathSegments.last.split(':').last
           : 'none',
     );
+    print(OTP.remainingSeconds());
+    print('called');
+    print(uri.queryParameters['secret'] ?? 'none');
+    print(val);
+    return val;
   }
 }
