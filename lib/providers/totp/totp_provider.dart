@@ -22,7 +22,7 @@ class Totp extends _$Totp {
         algorithm: Algorithm.SHA1,
         interval: 30,
         length: 6,
-        isGoogle: false,
+        isGoogle: true,
       ),
       issuer: uri.queryParameters['issuer'] ?? 'none',
       email: uri.pathSegments.isNotEmpty

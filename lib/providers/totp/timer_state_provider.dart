@@ -10,7 +10,10 @@ class TimerState extends _$TimerState {
   @override
   int build() {
     // calculate the remaining seconds in the current minute
-    return 30 - (DateTime.now().second % 30);
+    final now = DateTime.now();
+    final remainingSeconds =
+        30 - (now.second % 30); // assuming 30-second interval
+    return remainingSeconds > 0 ? remainingSeconds : 30;
   }
 
   void startTimer() {
