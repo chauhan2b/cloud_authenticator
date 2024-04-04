@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
-import '../../constants/shared_prefs_keys.dart';
 import '../../models/secret_key.dart';
 
 part 'secret_provider.g.dart';
@@ -17,26 +14,9 @@ class Secret extends _$Secret {
   // local list of secrets
   List<SecretKey> _secrets = [];
 
-  // save secrets to shared preferences
-  Future<void> _saveSecretsToPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final secretsString = jsonEncode(_secrets.map((e) => e.toJson()).toList());
-    await prefs.setString(_uid + SharedPrefsKeys.secretKey, secretsString);
-  }
-
   // fetch secrets from firestore
   Future<List<SecretKey>> _fetchSecrets() async {
     try {
-      // try loading from shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      final secretsString = prefs.getString(_uid + SharedPrefsKeys.secretKey);
-      if (secretsString != null) {
-        final List<dynamic> secretsJson = jsonDecode(secretsString);
-        _secrets = secretsJson.map((e) => SecretKey.fromJson(e)).toList();
-        return _secrets;
-      }
-
-      // if not found in shared preferences, load from firestore
       final snapshot = await _firestore
           .collection('users')
           .doc(_uid)
@@ -50,7 +30,7 @@ class Secret extends _$Secret {
                 id: doc.id,
               ))
           .toList();
-      await _saveSecretsToPrefs();
+
       return _secrets;
     } catch (error) {
       throw Exception('Error fetching secrets');
@@ -76,7 +56,6 @@ class Secret extends _$Secret {
 
     // update state
     state = AsyncValue.data(_secrets);
-    await _saveSecretsToPrefs();
   }
 
   Future<void> removeSecret(String id) async {
@@ -94,6 +73,5 @@ class Secret extends _$Secret {
 
     // update state
     state = AsyncValue.data(_secrets);
-    await _saveSecretsToPrefs();
   }
 }
