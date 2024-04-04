@@ -29,10 +29,7 @@ class Totp extends _$Totp {
           ? uri.pathSegments.last.split(':').last
           : 'none',
     );
-    print(OTP.remainingSeconds());
-    print('called');
-    print(uri.queryParameters['secret'] ?? 'none');
-    print(val);
+
     return val;
   }
 }
