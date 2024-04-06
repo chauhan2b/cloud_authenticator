@@ -111,11 +111,14 @@ class SettingsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Text(
         title,
         style: TextStyle(
-            color: Theme.of(context).colorScheme.primary, fontSize: 14),
+          fontSize: 14,
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
     );
   }
