@@ -27,10 +27,22 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const QRViewScreen(),
       );
     },
+    SettingsRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SettingsScreen(),
+      );
+    },
     SignInRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const SignInScreen(),
+      );
+    },
+    TOTPCodesRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TOTPCodesScreen(),
       );
     },
   };
@@ -65,6 +77,20 @@ class QRViewRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [SettingsScreen]
+class SettingsRoute extends PageRouteInfo<void> {
+  const SettingsRoute({List<PageRouteInfo>? children})
+      : super(
+          SettingsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SettingsRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [SignInScreen]
 class SignInRoute extends PageRouteInfo<void> {
   const SignInRoute({List<PageRouteInfo>? children})
@@ -74,6 +100,20 @@ class SignInRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'SignInRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TOTPCodesScreen]
+class TOTPCodesRoute extends PageRouteInfo<void> {
+  const TOTPCodesRoute({List<PageRouteInfo>? children})
+      : super(
+          TOTPCodesRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TOTPCodesRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -4,19 +4,18 @@ import 'package:cloud_authenticator/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../providers/auth/auth_provider.dart';
 import '../../providers/totp/secret_provider.dart';
 import '../../providers/totp/totp_provider.dart';
 
 @RoutePage()
-class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+class TOTPCodesScreen extends ConsumerStatefulWidget {
+  const TOTPCodesScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<TOTPCodesScreen> createState() => _TOTPCodesState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
   @override
   void initState() {
     super.initState();
@@ -28,28 +27,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final secretsFuture = ref.watch(secretProvider);
     final remainingTime = ref.watch(timerStateProvider).toString();
 
-    Future<void> signOut() async {
-      try {
-        await ref.read(firebaseAuthProvider.notifier).signOut();
-
-        if (context.mounted) {
-          context.router.replaceNamed('/sign-in');
-        }
-      } catch (error) {
-        // ignore: avoid_print
-        print(error);
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Screen'),
-        actions: [
-          IconButton(
-            onPressed: signOut,
-            icon: const Icon(Icons.exit_to_app),
-          ),
-        ],
+        title: const Text('Cloud Authenticator'),
       ),
       body: secretsFuture.when(
         data: (secrets) => secrets.isEmpty
