@@ -43,15 +43,41 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Sign Out'),
             onTap: () async {
-              try {
-                await ref.read(firebaseAuthProvider.notifier).signOut();
+              final confirmSignOut = await showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Sign Out'),
+                    content: const Text('Are you sure you want to sign out?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Sign Out'),
+                      ),
+                    ],
+                  );
+                },
+              );
 
-                if (context.mounted) {
-                  context.router.replaceNamed('/sign-in');
+              if (confirmSignOut) {
+                try {
+                  await ref.read(firebaseAuthProvider.notifier).signOut();
+
+                  if (context.mounted) {
+                    context.router.replaceNamed('/sign-in');
+                  }
+                } catch (error) {
+                  // ignore: avoid_print
+                  print(error);
                 }
-              } catch (error) {
-                // ignore: avoid_print
-                print(error);
               }
             },
           ),
