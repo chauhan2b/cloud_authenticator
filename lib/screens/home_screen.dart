@@ -32,9 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedIndex: _currentIndex,
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.vpn_key_outlined),
+            selectedIcon: Icon(Icons.vpn_key),
+            label: 'My Codes',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
