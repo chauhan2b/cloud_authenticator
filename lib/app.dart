@@ -28,7 +28,7 @@ class MyApp extends ConsumerWidget {
         theme: materialTheme == true
             ? appColorScheme.lightColorScheme(lightColorScheme)
             : appColorScheme.defaultLightColorScheme(),
-        darkTheme: darkTheme == true
+        darkTheme: materialTheme == true
             ? appColorScheme.darkColorScheme(darkColorScheme)
             : appColorScheme.defaultDarkColorScheme(),
         themeMode: systemTheme == true
