@@ -65,7 +65,7 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
                                 onPressed: () {
                                   ref
                                       .read(secretProvider.notifier)
-                                      .removeSecret(secret.key);
+                                      .removeSecret(secret.id);
                                   Navigator.of(context).pop();
                                 },
                                 child: const Text('Delete'),
