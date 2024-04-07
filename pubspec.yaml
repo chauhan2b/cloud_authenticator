@@ -16,9 +16,11 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.4.10
+  flutter_speed_dial: ^7.0.0
   freezed_annotation: ^2.4.1
   google_fonts: ^6.2.1
   json_annotation: ^4.8.1
+  local_auth: ^2.2.0
   mobile_scanner: ^4.0.1
   otp: ^3.1.4
   qr_code_scanner: ^1.0.1

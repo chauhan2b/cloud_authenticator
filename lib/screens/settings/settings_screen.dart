@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_authenticator/providers/auth/auth_provider.dart';
+import 'package:cloud_authenticator/providers/security/biometric_provider.dart';
 import 'package:cloud_authenticator/providers/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:local_auth/local_auth.dart';
 
 @RoutePage()
 class SettingsScreen extends ConsumerWidget {
@@ -14,6 +16,7 @@ class SettingsScreen extends ConsumerWidget {
     final darkTheme = ref.watch(darkThemeProvider).value;
     final systemTheme = ref.watch(systemThemeProvider).value;
     final materialTheme = ref.watch(materialThemeProvider).value;
+    final isBiometricEnabled = ref.watch(biometricProvider).value;
 
     return Scaffold(
       appBar: AppBar(
@@ -21,6 +24,30 @@ class SettingsScreen extends ConsumerWidget {
       ),
       body: ListView(
         children: [
+          const SettingsHeader(title: 'Security'),
+          ListTile(
+            leading: const Icon(Icons.fingerprint),
+            title: const Text('Use Biometrics'),
+            subtitle: const Text('Require fingerprint to unlock app'),
+            trailing: Switch(
+              value: isBiometricEnabled == true,
+              onChanged: (value) async {
+                if (value) {
+                  final localAuth = LocalAuthentication();
+                  bool didAuthenticate = await localAuth.authenticate(
+                    localizedReason: 'Verify to enable authentication',
+                  );
+
+                  if (!didAuthenticate) {
+                    return;
+                  }
+                }
+
+                // toggle biometric choice
+                ref.read(biometricProvider.notifier).toggleChoice();
+              },
+            ),
+          ),
           const SettingsHeader(title: 'Theme'),
           ListTile(
             leading: const Icon(Icons.phone_android_outlined),
@@ -46,7 +73,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.waves),
-            title: const Text('Use Material Theme'),
+            title: const Text('Material Theme'),
             subtitle: const Text('Use colors from wallpaper'),
             trailing: Switch(
               value: materialTheme == true,

@@ -3,6 +3,7 @@ import 'package:cloud_authenticator/providers/totp/timer_state_provider.dart';
 import 'package:cloud_authenticator/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../../providers/totp/secret_provider.dart';
 import '../../providers/totp/totp_provider.dart';
@@ -62,11 +63,56 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.router.push(const QRViewRoute());
-        },
-        child: const Icon(Icons.camera_alt),
+      floatingActionButton: SpeedDial(
+        icon: Icons.add,
+        activeIcon: Icons.close,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        overlayColor: Colors.black,
+        overlayOpacity: 0.5,
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.add),
+            label: 'Manually Add',
+            onTap: () {
+              // open a dialog box with a text field
+              showDialog(
+                context: context,
+                builder: (context) {
+                  final controller = TextEditingController();
+                  return AlertDialog(
+                    title: const Text('Add a new secret'),
+                    content: TextField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter the secret',
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          ref
+                              .read(secretProvider.notifier)
+                              .addSecret(controller.text);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Add'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.camera_alt),
+            label: 'Scan QR Code',
+            onTap: () {
+              context.router.push(const QRViewRoute());
+            },
+          ),
+        ],
       ),
     );
   }
