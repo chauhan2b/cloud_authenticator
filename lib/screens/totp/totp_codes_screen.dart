@@ -199,6 +199,28 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
                     actions: [
                       TextButton(
                         onPressed: () {
+                          // check if text is null
+                          if (controller.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Secret cannot be empty'),
+                              ),
+                            );
+                            Navigator.of(context).pop();
+                            return;
+                          }
+
+                          // check if secret is valid
+                          if (!controller.text.contains('otpauth://')) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Invalid secret'),
+                              ),
+                            );
+                            Navigator.of(context).pop();
+                            return;
+                          }
+
                           ref
                               .read(secretProvider.notifier)
                               .addSecret(controller.text);
