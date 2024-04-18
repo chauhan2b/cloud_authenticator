@@ -87,31 +87,34 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
                                   child: Icon(Icons.security),
                                 ),
                                 const SizedBox(width: 16),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      totp.issuer,
-                                      style: const TextStyle(fontSize: 16),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text(
-                                      totp.email,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        totp.issuer,
+                                        style: const TextStyle(fontSize: 16),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
+                                      Text(
+                                        totp.email,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const Spacer(),
+                                // const Spacer(),
                                 Text(
                                   remainingTime,
                                   style: const TextStyle(fontSize: 16),
-                                )
+                                ),
                               ],
                             ),
                             const SizedBox(height: 16),
