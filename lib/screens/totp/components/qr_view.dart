@@ -47,7 +47,11 @@ class _QRViewScreenState extends ConsumerState<QRViewScreen> {
                             content: Text('Invalid QR code'),
                           ),
                         );
-                        return;
+
+                        // go back to the home screen
+                        context.router.back();
+
+                        break;
                       }
 
                       // add the barcode value to firebase
