@@ -2,6 +2,7 @@
     "cSpell.words": [
         "barcodes",
         "Firestore",
+        "otpauth",
         "prefs",
         "signin",
         "TOTP",

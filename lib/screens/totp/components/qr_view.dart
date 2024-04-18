@@ -39,6 +39,17 @@ class _QRViewScreenState extends ConsumerState<QRViewScreen> {
                     if (barcode.rawValue != null &&
                         barcode.rawValue != lastBarcode) {
                       lastBarcode = barcode.rawValue;
+
+                      // check if the barcode is a URL
+                      if (!barcode.rawValue!.startsWith('otpauth://')) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Invalid QR code'),
+                          ),
+                        );
+                        return;
+                      }
+
                       // add the barcode value to firebase
                       ref
                           .read(secretProvider.notifier)
