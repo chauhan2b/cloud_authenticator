@@ -32,15 +32,13 @@ class SettingsScreen extends ConsumerWidget {
             trailing: Switch(
               value: isBiometricEnabled == true,
               onChanged: (value) async {
-                if (value) {
-                  final localAuth = LocalAuthentication();
-                  bool didAuthenticate = await localAuth.authenticate(
-                    localizedReason: 'Verify to enable authentication',
-                  );
+                final localAuth = LocalAuthentication();
+                bool didAuthenticate = await localAuth.authenticate(
+                  localizedReason: 'Verify to enable authentication',
+                );
 
-                  if (!didAuthenticate) {
-                    return;
-                  }
+                if (!didAuthenticate) {
+                  return;
                 }
 
                 // toggle biometric choice
