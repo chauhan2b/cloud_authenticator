@@ -1,3 +1,4 @@
+import 'package:cloud_authenticator/constants/shared_prefs_keys.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,14 +9,15 @@ class Biometric extends _$Biometric {
   // load material theme from shared preferences
   Future<bool> _loadBiometricChoice() async {
     final prefs = await SharedPreferences.getInstance();
-    final isBiometricEnabled = prefs.getBool('biometric') ?? false;
+    final isBiometricEnabled =
+        prefs.getBool(SharedPrefsKeys.biometric) ?? false;
     return isBiometricEnabled;
   }
 
   // save material theme to shared preferences
   Future<void> _saveBiometricChoice(bool isBiometricEnabled) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('biometric', isBiometricEnabled);
+    await prefs.setBool(SharedPrefsKeys.biometric, isBiometricEnabled);
   }
 
   @override

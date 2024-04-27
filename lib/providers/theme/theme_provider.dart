@@ -1,3 +1,4 @@
+import 'package:cloud_authenticator/constants/shared_prefs_keys.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,14 +9,14 @@ class DarkTheme extends _$DarkTheme {
   // load dark theme from shared preferences
   Future<bool> _loadDarkTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final isDark = prefs.getBool('darkTheme') ?? false;
+    final isDark = prefs.getBool(SharedPrefsKeys.darkTheme) ?? false;
     return isDark;
   }
 
   // save dark theme to shared preferences
   Future<void> _saveDarkTheme(bool isDark) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkTheme', isDark);
+    await prefs.setBool(SharedPrefsKeys.darkTheme, isDark);
   }
 
   @override
@@ -36,14 +37,14 @@ class SystemTheme extends _$SystemTheme {
   // load system theme from shared preferences
   Future<bool> _loadSystemTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final isSystem = prefs.getBool('systemTheme') ?? false;
+    final isSystem = prefs.getBool(SharedPrefsKeys.systemTheme) ?? false;
     return isSystem;
   }
 
   // save system theme to shared preferences
   Future<void> _saveSystemTheme(bool isSystem) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('systemTheme', isSystem);
+    await prefs.setBool(SharedPrefsKeys.systemTheme, isSystem);
   }
 
   @override
@@ -64,14 +65,14 @@ class MaterialTheme extends _$MaterialTheme {
   // load material theme from shared preferences
   Future<bool> _loadMaterialTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final isMaterial = prefs.getBool('materialTheme') ?? false;
+    final isMaterial = prefs.getBool(SharedPrefsKeys.materialTheme) ?? false;
     return isMaterial;
   }
 
   // save material theme to shared preferences
   Future<void> _saveMaterialTheme(bool isMaterial) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('materialTheme', isMaterial);
+    await prefs.setBool(SharedPrefsKeys.materialTheme, isMaterial);
   }
 
   @override
