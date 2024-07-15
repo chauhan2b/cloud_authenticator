@@ -19,11 +19,33 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   bool _isSigningIn = true;
 
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+  bool isEmailFocused = false;
+  bool isPasswordFocused = false;
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _emailFocusNode.addListener(() {
+      setState(() {
+        isEmailFocused = _emailFocusNode.hasFocus;
+      });
+    });
+    _passwordFocusNode.addListener(() {
+      setState(() {
+        isPasswordFocused = _passwordFocusNode.hasFocus;
+      });
+    });
   }
 
   @override
@@ -84,13 +106,57 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Email',
+            _isSigningIn
+                ? const Text(
+                    'Sign In',
+                    style: TextStyle(fontSize: 32),
+                  )
+                : const Text(
+                    'Register',
+                    style: TextStyle(fontSize: 32),
+                  ),
+            _isSigningIn
+                ? Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Good to see you again!',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Welcome! Let\'s get you set up.',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                    ),
+                  ),
+            const SizedBox(
+              height: 50,
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 18.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Email',
+                  style: isEmailFocused
+                      ? TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold)
+                      : null,
+                ),
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: TextFormField(
                 controller: _emailController,
+                focusNode: _emailFocusNode,
                 decoration: InputDecoration(
                   hintText: 'Email',
                   filled: true,
@@ -114,12 +180,45 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 },
               ),
             ),
+            const SizedBox(
+              height: 8,
+            ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 18.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Password',
+                  style: isPasswordFocused
+                      ? TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold)
+                      : null,
+                ),
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(label: Text('Password')),
+                focusNode: _passwordFocusNode,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your password';
@@ -131,15 +230,35 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                await authenticate(
-                  _emailController.text.trim(),
-                  _passwordController.text.trim(),
-                );
-              },
-              child:
-                  _isSigningIn ? const Text('Sign In') : const Text('Register'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await authenticate(
+                      _emailController.text.trim(),
+                      _passwordController.text.trim(),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: _isSigningIn
+                      ? const Text('Sign In')
+                      : const Text('Register'),
+                ),
+              ),
             ),
             const SizedBox(height: 10),
             TextButton(
