@@ -80,6 +80,21 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
           ),
+          const SettingsHeader(title: 'Backup'),
+          ListTile(
+            leading: const Icon(Icons.file_download_rounded),
+            title: const Text('Import from device'),
+            onTap: () {
+              context.router.pushNamed('/backup');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.upload_file),
+            title: const Text('Export to device'),
+            onTap: () {
+              context.router.pushNamed('/backup/export');
+            },
+          ),
           const SettingsHeader(title: 'Account'),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
