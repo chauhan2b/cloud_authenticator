@@ -9,45 +9,6 @@
 
 part of 'app_router.dart';
 
-abstract class _$AppRouter extends RootStackRouter {
-  // ignore: unused_element
-  _$AppRouter({super.navigatorKey});
-
-  @override
-  final Map<String, PageFactory> pagesMap = {
-    HomeRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const HomeScreen(),
-      );
-    },
-    QRViewRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const QRViewScreen(),
-      );
-    },
-    SettingsRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SettingsScreen(),
-      );
-    },
-    SignInRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SignInScreen(),
-      );
-    },
-    TOTPCodesRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const TOTPCodesScreen(),
-      );
-    },
-  };
-}
-
 /// generated route for
 /// [HomeScreen]
 class HomeRoute extends PageRouteInfo<void> {
@@ -59,7 +20,12 @@ class HomeRoute extends PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const HomeScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -73,7 +39,12 @@ class QRViewRoute extends PageRouteInfo<void> {
 
   static const String name = 'QRViewRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const QRViewScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -87,7 +58,12 @@ class SettingsRoute extends PageRouteInfo<void> {
 
   static const String name = 'SettingsRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SettingsScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -101,7 +77,12 @@ class SignInRoute extends PageRouteInfo<void> {
 
   static const String name = 'SignInRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SignInScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -115,5 +96,10 @@ class TOTPCodesRoute extends PageRouteInfo<void> {
 
   static const String name = 'TOTPCodesRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const TOTPCodesScreen();
+    },
+  );
 }

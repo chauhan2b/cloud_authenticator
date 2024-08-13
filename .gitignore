@@ -46,3 +46,8 @@ app.*.map.json
 *.g.dart
 *.freezed.dart
 *.gr.dart
+
+# Ignore firebase files
+firebase.json
+android/app/google-services.json
+lib/firebase_options.dart

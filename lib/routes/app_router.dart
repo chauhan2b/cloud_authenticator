@@ -12,7 +12,7 @@ part 'app_router.gr.dart';
 part 'app_router.g.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')
-class AppRouter extends _$AppRouter {
+class AppRouter extends RootStackRouter {
   @override
   late List<AutoRoute> routes = [];
   final AuthGuard authGuard;

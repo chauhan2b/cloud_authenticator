@@ -89,7 +89,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    context.router.pop();
+                    context.router.maybePop();
                   },
                   child: const Text('OK'),
                 ),
