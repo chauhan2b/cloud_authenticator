@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../models/secret_key.dart';
 
@@ -73,5 +79,33 @@ class Secret extends _$Secret {
 
     // update state
     state = AsyncValue.data(_secrets);
+  }
+
+  // export secrets to device
+  Future<void> exportSecrets() async {
+    if (await Permission.storage.request().isGranted) {
+      try {
+        // fetch secrets
+        await _fetchSecrets();
+
+        // get local documents directory
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File('${directory.path}/secrets.txt');
+
+        // write secrets to file
+        await file
+            .writeAsString(_secrets.map((secret) => secret.key).join('\n'));
+
+        // share the file
+        await Share.shareXFiles([XFile(file.path)], text: 'My secret keys');
+
+        // print file path
+        debugPrint('Secrets exported to ${file.path}');
+      } catch (error) {
+        throw Exception('Error exporting secrets');
+      }
+    } else {
+      debugPrint('Permission denied');
+    }
   }
 }

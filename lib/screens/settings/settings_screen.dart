@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_authenticator/providers/auth/auth_provider.dart';
 import 'package:cloud_authenticator/providers/security/biometric_provider.dart';
 import 'package:cloud_authenticator/providers/theme/theme_provider.dart';
+import 'package:cloud_authenticator/providers/totp/secret_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
@@ -92,7 +93,7 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.upload_file),
             title: const Text('Export to device'),
             onTap: () {
-              context.router.pushNamed('/backup/export');
+              ref.read(secretProvider.notifier).exportSecrets();
             },
           ),
           const SettingsHeader(title: 'Account'),
