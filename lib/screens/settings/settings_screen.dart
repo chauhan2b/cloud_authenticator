@@ -5,6 +5,7 @@ import 'package:cloud_authenticator/providers/theme/theme_provider.dart';
 import 'package:cloud_authenticator/providers/totp/secret_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 
 @RoutePage()
@@ -85,15 +86,36 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.file_download_rounded),
             title: const Text('Import from device'),
-            onTap: () {
-              context.router.pushNamed('/backup');
+            onTap: () async {
+              try {
+                final count =
+                    await ref.read(secretProvider.notifier).importSecrets();
+                Fluttertoast.showToast(
+                  msg: 'Imported $count secrets',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black,
+                  fontSize: 16.0,
+                );
+              } catch (error) {
+                Fluttertoast.showToast(
+                  msg: 'Error importing secrets: $error',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                );
+              }
             },
           ),
           ListTile(
             leading: const Icon(Icons.upload_file),
             title: const Text('Export to device'),
             onTap: () {
-              ref.read(secretProvider.notifier).exportSecrets();
+              showWarningDialog(context, () {
+                ref.read(secretProvider.notifier).exportSecrets();
+              });
             },
           ),
           const SettingsHeader(title: 'Account'),
@@ -141,6 +163,34 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void showWarningDialog(BuildContext context, VoidCallback onConfirm) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Warning'),
+          content: const Text(
+              'The secrets are not encrypted. Do you want to proceed?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Proceed'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                onConfirm();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

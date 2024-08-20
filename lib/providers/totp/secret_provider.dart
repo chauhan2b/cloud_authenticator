@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -49,6 +49,12 @@ class Secret extends _$Secret {
   }
 
   Future<void> addSecret(String secret) async {
+    // check if the secret already exists
+    if (_secrets.any((s) => s.key == secret)) {
+      debugPrint('Secret already exists');
+      return;
+    }
+
     // add to firestore
     state = const AsyncValue.loading();
     final docRef = await _firestore
@@ -81,31 +87,55 @@ class Secret extends _$Secret {
     state = AsyncValue.data(_secrets);
   }
 
+  // import secrets from file
+  Future<int> importSecrets() async {
+    try {
+      // get file from device
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['txt'],
+      );
+
+      // check if file is selected
+      if (result == null || result.files.isEmpty) {
+        throw Exception('No file selected');
+      }
+
+      // read secrets from file
+      final file = File(result.files.single.path!);
+      final secrets = await file.readAsLines();
+
+      // add secrets to firestore
+      for (final secret in secrets) {
+        await addSecret(secret);
+      }
+
+      return secrets.length;
+    } catch (error) {
+      throw Exception('Error importing secrets: $error');
+    }
+  }
+
   // export secrets to device
   Future<void> exportSecrets() async {
-    if (await Permission.storage.request().isGranted) {
-      try {
-        // fetch secrets
-        await _fetchSecrets();
+    try {
+      // fetch secrets
+      await _fetchSecrets();
 
-        // get local documents directory
-        final directory = await getApplicationDocumentsDirectory();
-        final file = File('${directory.path}/secrets.txt');
+      // get local documents directory
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/secrets.txt');
 
-        // write secrets to file
-        await file
-            .writeAsString(_secrets.map((secret) => secret.key).join('\n'));
+      // write secrets to file
+      await file.writeAsString(_secrets.map((secret) => secret.key).join('\n'));
 
-        // share the file
-        await Share.shareXFiles([XFile(file.path)], text: 'My secret keys');
+      // share the file
+      await Share.shareXFiles([XFile(file.path)], text: 'My secret keys');
 
-        // print file path
-        debugPrint('Secrets exported to ${file.path}');
-      } catch (error) {
-        throw Exception('Error exporting secrets');
-      }
-    } else {
-      debugPrint('Permission denied');
+      // print file path
+      debugPrint('Secrets exported to ${file.path}');
+    } catch (error) {
+      throw Exception('Error exporting secrets');
     }
   }
 }
