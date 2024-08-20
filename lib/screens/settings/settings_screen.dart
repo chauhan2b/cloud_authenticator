@@ -20,6 +20,10 @@ class SettingsScreen extends ConsumerWidget {
     final materialTheme = ref.watch(materialThemeProvider).value;
     final isBiometricEnabled = ref.watch(biometricProvider).value;
 
+    // toast colors
+    final secondaryColor = Theme.of(context).colorScheme.secondary;
+    final onSecondaryColor = Theme.of(context).colorScheme.onSecondary;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -90,22 +94,14 @@ class SettingsScreen extends ConsumerWidget {
               try {
                 final count =
                     await ref.read(secretProvider.notifier).importSecrets();
-                Fluttertoast.showToast(
-                  msg: 'Imported $count secrets',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black,
-                  fontSize: 16.0,
-                );
+
+                if (context.mounted) {
+                  showToast('Imported $count secrets',
+                      backgroundColor: secondaryColor,
+                      textColor: onSecondaryColor);
+                }
               } catch (error) {
-                Fluttertoast.showToast(
-                  msg: 'Error importing secrets: $error',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                );
+                showToast('Error importing secrets: $error');
               }
             },
           ),
@@ -163,6 +159,19 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void showToast(String message,
+      {Color backgroundColor = Colors.black, Color textColor = Colors.white}) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      fontSize: 16.0,
     );
   }
 
