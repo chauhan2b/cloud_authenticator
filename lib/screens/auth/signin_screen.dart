@@ -227,6 +227,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   }
                   return null;
                 },
+                onFieldSubmitted: (_) {
+                  authenticate(
+                    _emailController.text.trim(),
+                    _passwordController.text.trim(),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 10),
