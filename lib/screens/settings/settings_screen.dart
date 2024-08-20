@@ -96,12 +96,21 @@ class SettingsScreen extends ConsumerWidget {
                     await ref.read(secretProvider.notifier).importSecrets();
 
                 if (context.mounted) {
-                  showToast('Imported $count secrets',
-                      backgroundColor: secondaryColor,
-                      textColor: onSecondaryColor);
+                  showToast(
+                    'Imported $count secrets',
+                    backgroundColor: secondaryColor,
+                    textColor: onSecondaryColor,
+                  );
                 }
               } catch (error) {
-                showToast('Error importing secrets: $error');
+                final errorMessage =
+                    error.toString().replaceFirst('Exception: ', '');
+
+                showToast(
+                  'Error: $errorMessage',
+                  backgroundColor: secondaryColor,
+                  textColor: onSecondaryColor,
+                );
               }
             },
           ),

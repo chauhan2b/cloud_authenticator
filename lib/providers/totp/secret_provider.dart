@@ -112,7 +112,7 @@ class Secret extends _$Secret {
 
       return secrets.length;
     } catch (error) {
-      throw Exception('Error importing secrets: $error');
+      rethrow;
     }
   }
 
