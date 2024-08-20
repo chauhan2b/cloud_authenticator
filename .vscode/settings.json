@@ -4,6 +4,7 @@
         "Firestore",
         "otpauth",
         "prefs",
+        "riverpod",
         "signin",
         "TOTP",
         "totps"
