@@ -1,13 +1,15 @@
 {
-    "cSpell.words": [
-        "barcodes",
-        "Firestore",
-        "Fluttertoast",
-        "otpauth",
-        "prefs",
-        "riverpod",
-        "signin",
-        "TOTP",
-        "totps"
-    ]
+  "cSpell.words": [
+    "barcodes",
+    "Firestore",
+    "Fluttertoast",
+    "otpauth",
+    "prefs",
+    "pubspec",
+    "riverpod",
+    "signin",
+    "subosito",
+    "TOTP",
+    "totps"
+  ]
 }
