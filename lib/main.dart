@@ -12,6 +12,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // make navigation bar transparent
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+    ),
+  );
+
+  // make flutter draw behind navigation bar
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
   // check if biometrics is enabled
   final prefs = await SharedPreferences.getInstance();
   bool isBiometricsEnabled = prefs.getBool('biometric') ?? false;
