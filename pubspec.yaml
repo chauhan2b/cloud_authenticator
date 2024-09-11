@@ -21,6 +21,7 @@ dependencies:
   fluttertoast: ^8.2.8
   freezed_annotation: ^2.4.1
   google_fonts: ^6.2.1
+  http: ^1.2.2
   json_annotation: ^4.8.1
   local_auth: ^2.2.0
   mobile_scanner: ^5.1.1
