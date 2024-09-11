@@ -194,7 +194,7 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
         error: (error, stackTrace) => Center(
           child: Text(error.toString()),
         ),
-        loading: () => const Center(child: TOTPLoadingShimmer()),
+        loading: () => const Center(child: CircularProgressIndicator()),
       ),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
