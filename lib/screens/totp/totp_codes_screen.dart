@@ -1,6 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_authenticator/providers/totp/timer_state_provider.dart';
-import 'package:cloud_authenticator/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +6,10 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../../providers/theme/theme_provider.dart';
 import '../../providers/totp/secret_provider.dart';
+import '../../providers/totp/timer_state_provider.dart';
 import '../../providers/totp/totp_provider.dart';
+import '../../routes/app_router.dart';
+import 'components/totp_loading_shimmer.dart';
 
 @RoutePage()
 class TOTPCodesScreen extends ConsumerStatefulWidget {
@@ -186,14 +187,14 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
                     ),
                     error: (error, stackTrace) =>
                         const Text('Error loading TOTP'),
-                    loading: () => const CircularProgressIndicator(),
+                    loading: () => const TOTPLoadingShimmer(),
                   );
                 },
               ),
         error: (error, stackTrace) => Center(
           child: Text(error.toString()),
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: TOTPLoadingShimmer()),
       ),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
