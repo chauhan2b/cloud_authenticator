@@ -2,16 +2,19 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_authenticator/screens/settings/settings_screen.dart';
 import 'package:cloud_authenticator/screens/totp/totp_codes_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../providers/theme/theme_provider.dart';
 
 @RoutePage()
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = const [
@@ -21,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkTheme = ref.watch(darkThemeProvider).value;
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: NavigationBar(
@@ -42,6 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Settings',
           ),
         ],
+        backgroundColor: darkTheme == true
+            ? Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.2)
+            : Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.4),
       ),
     );
   }
