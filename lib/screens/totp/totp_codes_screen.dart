@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
+import '../../providers/theme/theme_provider.dart';
 import '../../providers/totp/secret_provider.dart';
 import '../../providers/totp/totp_provider.dart';
 
@@ -28,6 +29,7 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
   Widget build(BuildContext context) {
     final secretsFuture = ref.watch(secretProvider);
     final remainingTime = ref.watch(timerStateProvider).toString();
+    final darkTheme = ref.watch(darkThemeProvider).value;
 
     return Scaffold(
       appBar: AppBar(
@@ -78,6 +80,16 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
                       },
                       child: Card(
                         margin: const EdgeInsets.all(8),
+                        elevation: 0,
+                        color: darkTheme == true
+                            ? Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer
+                                .withOpacity(0.2)
+                            : Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer
+                                .withOpacity(0.4),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
