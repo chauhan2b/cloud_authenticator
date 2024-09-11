@@ -48,6 +48,11 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
                   final secret = secrets[index];
                   final totpAsync = ref.read(totpProvider(secret.key));
 
+                  // add some space so copy button is not hidden behind FAB
+                  if (index == secrets.length - 1) {
+                    return const SizedBox(height: 80);
+                  }
+
                   return totpAsync.when(
                     data: (totp) => GestureDetector(
                       onLongPress: () {
