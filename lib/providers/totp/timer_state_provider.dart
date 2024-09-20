@@ -7,22 +7,35 @@ part 'timer_state_provider.g.dart';
 
 @riverpod
 class TimerState extends _$TimerState {
+  Timer? _timer;
+
   @override
   int build() {
+    // dispose the timer when the provider is disposed
+    ref.onDispose(() {
+      _timer?.cancel();
+    });
+
     // calculate the remaining seconds in the current minute
     final now = DateTime.now();
     final remainingSeconds = 30 - (now.second % 30);
+
+    // start the timer
+    startTimer();
+
     return remainingSeconds > 0 ? remainingSeconds : 30;
   }
 
   void startTimer() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    // cancel existing timers
+    _timer?.cancel();
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state > 1) {
         state--;
       } else {
-        // refresh totp provider and reset the timer
-        ref.invalidate(totpProvider);
         state = 30;
+        ref.invalidate(totpProvider);
       }
     });
   }
