@@ -135,18 +135,16 @@ class TOTPCodesScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 // const Spacer(),
-                                RepaintBoundary(
-                                  child: Consumer(
-                                    builder: (context, ref, child) {
-                                      final remainingTime = ref
-                                          .watch(timerStateProvider)
-                                          .toString();
-                                      return Text(
-                                        remainingTime,
-                                        style: const TextStyle(fontSize: 16),
-                                      );
-                                    },
-                                  ),
+                                Consumer(
+                                  builder: (context, ref, child) {
+                                    final remainingTime = ref
+                                        .watch(timerStateProvider)
+                                        .toString();
+                                    return Text(
+                                      remainingTime,
+                                      style: const TextStyle(fontSize: 16),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
