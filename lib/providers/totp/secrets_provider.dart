@@ -14,7 +14,7 @@ import '../../services/logo_service.dart';
 
 part 'secrets_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Secrets extends _$Secrets {
   final _uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
   final _firestore = FirebaseFirestore.instance;

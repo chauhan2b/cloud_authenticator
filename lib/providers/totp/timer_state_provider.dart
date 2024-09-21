@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'timer_state_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class TimerState extends _$TimerState {
   Timer? _timer;
 
