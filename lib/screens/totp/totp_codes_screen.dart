@@ -11,6 +11,7 @@ import '../../providers/totp/timer_state_provider.dart';
 import '../../providers/totp/totp_provider.dart';
 import '../../routes/app_router.dart';
 import '../../services/backup_service.dart';
+import 'components/totp_code.dart';
 
 @RoutePage()
 class TOTPCodesScreen extends ConsumerWidget {
@@ -40,9 +41,7 @@ class TOTPCodesScreen extends ConsumerWidget {
                     return const SizedBox(height: 80);
                   }
 
-                  // get the secret and code
                   final secret = secrets[index];
-                  final code = ref.watch(totpProvider(secret.secret));
 
                   // return the secret widget
                   return GestureDetector(
@@ -152,25 +151,22 @@ class TOTPCodesScreen extends ConsumerWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  code,
-                                  style: TextStyle(
-                                    fontSize: 28,
-                                    letterSpacing: 28,
+                                TotpCode(secret: secret.secret),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.copy,
                                     color:
                                         Theme.of(context).colorScheme.secondary,
-                                    fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.copy,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary),
                                   onPressed: () {
                                     // copy the code to the clipboard
                                     Clipboard.setData(
-                                        ClipboardData(text: code));
+                                      ClipboardData(
+                                        text: ref.read(
+                                          totpProvider(secret.secret),
+                                        ),
+                                      ),
+                                    );
                                     // ScaffoldMessenger.of(context).showSnackBar(
                                     //   const SnackBar(
                                     //     content: Text('Copied to clipboard'),
