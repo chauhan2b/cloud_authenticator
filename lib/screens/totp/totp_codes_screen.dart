@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,11 +97,10 @@ class TOTPCodesScreen extends ConsumerWidget {
                                     ? CircleAvatar(
                                         backgroundColor: Colors.transparent,
                                         child: ClipOval(
-                                          child: Image.network(
-                                            secret.imageUrl!,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (context, error,
-                                                    stackTrace) =>
+                                          child: CachedNetworkImage(
+                                            imageUrl: secret.imageUrl!,
+                                            errorWidget: (context, url,
+                                                    error) =>
                                                 const CircleAvatar(
                                                     child:
                                                         Icon(Icons.security)),

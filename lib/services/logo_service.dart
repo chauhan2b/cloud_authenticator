@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,8 +14,6 @@ class LogoService {
   }
 
   Future<String?> fetchAndStoreLogo(String issuer) async {
-    log('MADE A NETWORK REQUEST FOR $issuer');
-
     // list of possible domains
     final List<String> domains = ['.com', '.net', '.org', '.io', '.dev', '.in'];
 
