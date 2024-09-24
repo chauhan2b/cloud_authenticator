@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_authenticator/providers/totp/secret_provider.dart';
+import 'package:cloud_authenticator/providers/totp/secrets_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+
+import '../../../services/backup_service.dart';
 
 @RoutePage()
 class QRViewScreen extends ConsumerStatefulWidget {
@@ -54,10 +56,13 @@ class _QRViewScreenState extends ConsumerState<QRViewScreen> {
                         break;
                       }
 
+                      // convert totp string to UserSecret
+                      final backupService = BackupService();
+                      final userSecret =
+                          backupService.parseOtpUrl(barcode.rawValue!);
+
                       // add the barcode value to firebase
-                      ref
-                          .read(secretProvider.notifier)
-                          .addSecret(barcode.rawValue!);
+                      ref.read(secretsProvider.notifier).addSecret(userSecret);
 
                       // go back to the home screen
                       context.router.back();

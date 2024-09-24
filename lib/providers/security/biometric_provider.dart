@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 part 'biometric_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class Biometric extends _$Biometric {
   // load material theme from shared preferences
   Future<bool> _loadBiometricChoice() async {

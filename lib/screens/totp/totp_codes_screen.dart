@@ -1,198 +1,185 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../../providers/theme/theme_provider.dart';
-import '../../providers/totp/secret_provider.dart';
+import '../../providers/totp/secrets_provider.dart';
 import '../../providers/totp/timer_state_provider.dart';
 import '../../providers/totp/totp_provider.dart';
 import '../../routes/app_router.dart';
-import 'components/totp_loading_shimmer.dart';
+import '../../services/backup_service.dart';
+import 'components/totp_code.dart';
 
 @RoutePage()
-class TOTPCodesScreen extends ConsumerStatefulWidget {
+class TOTPCodesScreen extends ConsumerWidget {
   const TOTPCodesScreen({super.key});
 
   @override
-  ConsumerState<TOTPCodesScreen> createState() => _TOTPCodesState();
-}
-
-class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
-  @override
-  void initState() {
-    super.initState();
-    ref.read(timerStateProvider.notifier).startTimer();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final secretsFuture = ref.watch(secretProvider);
-    final remainingTime = ref.watch(timerStateProvider).toString();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncSecrets = ref.watch(secretsProvider);
     final darkTheme = ref.watch(darkThemeProvider).value;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cloud Authenticator'),
       ),
-      body: secretsFuture.when(
+      body: asyncSecrets.when(
         data: (secrets) => secrets.isEmpty
             ? const Center(
                 child: Text('Your authentication codes will appear here'),
               )
             : ListView.builder(
-                itemCount: secrets.length,
+                itemCount: secrets.length + 1,
                 padding: const EdgeInsets.all(8),
                 itemBuilder: (context, index) {
-                  final secret = secrets[index];
-                  final totpAsync = ref.read(totpProvider(secret.key));
-
-                  // add some space so copy button is not hidden behind FAB
-                  if (index == secrets.length - 1) {
+                  // add some space after the last secret
+                  // so the copy button is not hidden behind FAB
+                  if (index == secrets.length) {
                     return const SizedBox(height: 80);
                   }
 
-                  return totpAsync.when(
-                    data: (totp) => GestureDetector(
-                      onLongPress: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Delete secret'),
-                              content: Text(
-                                  'Are you sure you want to delete ${totp.issuer}?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    ref
-                                        .read(secretProvider.notifier)
-                                        .removeSecret(secret.id);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Delete'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Card(
-                        margin: const EdgeInsets.all(8),
-                        elevation: 0,
-                        color: darkTheme == true
-                            ? Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer
-                                .withOpacity(0.2)
-                            : Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer
-                                .withOpacity(0.4),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  totp.imageUrl != null
-                                      ? CircleAvatar(
-                                          backgroundColor: Colors.transparent,
-                                          child: ClipOval(
-                                            child: Image.network(
-                                              totp.imageUrl!,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error,
-                                                      stackTrace) =>
-                                                  const CircleAvatar(
-                                                      child:
-                                                          Icon(Icons.security)),
-                                            ),
-                                          ),
-                                        )
-                                      : const CircleAvatar(
-                                          child: Icon(Icons.security),
-                                        ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          totp.issuer,
-                                          style: const TextStyle(fontSize: 16),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          totp.email,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // const Spacer(),
-                                  Text(
-                                    remainingTime,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ],
+                  final secret = secrets[index];
+
+                  // return the secret widget
+                  return GestureDetector(
+                    onLongPress: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Delete secret'),
+                            content: Text(
+                                'Are you sure you want to delete ${secret.issuer}?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancel'),
                               ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    totp.code,
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      letterSpacing: 28,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.copy,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary),
-                                    onPressed: () {
-                                      // copy the code to the clipboard
-                                      Clipboard.setData(
-                                          ClipboardData(text: totp.code));
-                                      // ScaffoldMessenger.of(context).showSnackBar(
-                                      //   const SnackBar(
-                                      //     content: Text('Copied to clipboard'),
-                                      //   ),
-                                      // );
-                                    },
-                                  ),
-                                ],
+                              TextButton(
+                                onPressed: () {
+                                  ref
+                                      .read(secretsProvider.notifier)
+                                      .removeSecret(secret.id);
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Delete'),
                               ),
                             ],
-                          ),
+                          );
+                        },
+                      );
+                    },
+                    child: Card(
+                      margin: const EdgeInsets.all(8),
+                      elevation: 0,
+                      color: darkTheme == true
+                          ? Theme.of(context)
+                              .colorScheme
+                              .secondaryContainer
+                              .withOpacity(0.15)
+                          : Theme.of(context)
+                              .colorScheme
+                              .secondaryContainer
+                              .withOpacity(0.4),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                secret.imageUrl != null
+                                    ? CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        child: ClipOval(
+                                          child: CachedNetworkImage(
+                                            imageUrl: secret.imageUrl!,
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                const CircleAvatar(
+                                                    child:
+                                                        Icon(Icons.security)),
+                                          ),
+                                        ),
+                                      )
+                                    : const CircleAvatar(
+                                        child: Icon(Icons.security),
+                                      ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        secret.issuer,
+                                        style: const TextStyle(fontSize: 16),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        secret.email,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // const Spacer(),
+                                Consumer(
+                                  builder: (context, ref, child) {
+                                    final remainingTime = ref
+                                        .watch(timerStateProvider)
+                                        .toString();
+                                    return Text(
+                                      remainingTime,
+                                      style: const TextStyle(fontSize: 16),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TotpCode(secret: secret.secret),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.copy,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  onPressed: () {
+                                    // copy the code to the clipboard
+                                    Clipboard.setData(
+                                      ClipboardData(
+                                        text: ref.read(
+                                          totpProvider(secret.secret),
+                                        ),
+                                      ),
+                                    );
+                                    // ScaffoldMessenger.of(context).showSnackBar(
+                                    //   const SnackBar(
+                                    //     content: Text('Copied to clipboard'),
+                                    //   ),
+                                    // );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    error: (error, stackTrace) =>
-                        const Text('Error loading TOTP'),
-                    loading: () => const TOTPLoadingShimmer(),
                   );
                 },
               ),
@@ -251,7 +238,7 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
                           }
 
                           // check if secret is valid
-                          if (!controller.text.contains('otpauth://')) {
+                          if (!controller.text.contains('otpauth://totp')) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Invalid secret'),
@@ -261,9 +248,14 @@ class _TOTPCodesState extends ConsumerState<TOTPCodesScreen> {
                             return;
                           }
 
+                          // convert totp string to UserSecret
+                          final backupService = BackupService();
+                          final userSecret =
+                              backupService.parseOtpUrl(controller.text);
+
                           ref
-                              .read(secretProvider.notifier)
-                              .addSecret(controller.text);
+                              .read(secretsProvider.notifier)
+                              .addSecret(userSecret);
                           Navigator.of(context).pop();
                         },
                         child: const Text('Add'),

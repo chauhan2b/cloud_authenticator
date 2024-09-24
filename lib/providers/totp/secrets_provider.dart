@@ -8,20 +8,26 @@ import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../models/secret_key.dart';
+import '../../models/user_secret.dart';
+import '../../services/backup_service.dart';
+import '../../services/logo_service.dart';
 
-part 'secret_provider.g.dart';
+part 'secrets_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class Secret extends _$Secret {
+class Secrets extends _$Secrets {
   final _uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
   final _firestore = FirebaseFirestore.instance;
 
+  // helper services
+  final _logoService = LogoService();
+  final _backupService = BackupService();
+
   // local list of secrets
-  List<SecretKey> _secrets = [];
+  List<UserSecret> _secrets = [];
 
   // fetch secrets from firestore
-  Future<List<SecretKey>> _fetchSecrets() async {
+  Future<List<UserSecret>> _fetchSecrets() async {
     try {
       final snapshot = await _firestore
           .collection('users')
@@ -30,12 +36,18 @@ class Secret extends _$Secret {
           .get();
 
       // update local list
-      _secrets = snapshot.docs
-          .map((doc) => SecretKey(
-                key: doc['secret'] as String,
-                id: doc.id,
-              ))
-          .toList();
+      _secrets = await Future.wait(snapshot.docs.map((doc) async {
+        final data = doc.data();
+        final imageUrl =
+            await _logoService.getLogoUrl(data['issuer'] as String);
+        return UserSecret(
+          id: doc.id,
+          secret: data['secret'] as String,
+          issuer: data['issuer'] as String,
+          email: data['email'] as String,
+          imageUrl: imageUrl,
+        );
+      }));
 
       return _secrets;
     } catch (error) {
@@ -44,27 +56,36 @@ class Secret extends _$Secret {
   }
 
   @override
-  FutureOr<List<SecretKey>> build() {
+  Future<List<UserSecret>> build() {
     return _fetchSecrets();
   }
 
-  Future<void> addSecret(String secret) async {
+  Future<void> addSecret(UserSecret secret) async {
     // check if the secret already exists
-    if (_secrets.any((s) => s.key == secret)) {
+    if (_secrets.any((s) => s.secret == secret.secret)) {
       debugPrint('Secret already exists');
       return;
     }
 
-    // add to firestore
     state = const AsyncValue.loading();
+
+    // fetch and store logo if not already available
+    final logoUrl = await _logoService.getLogoUrl(secret.issuer);
+    final secretWithLogoUrl = secret.copyWith(imageUrl: logoUrl);
+
+    // add to firestore
     final docRef = await _firestore
         .collection('users')
         .doc(_uid)
         .collection('secrets')
-        .add({'secret': secret});
+        .add(secretWithLogoUrl.toJson());
+
+    // update id
+    final secretWithFirebaseId = secretWithLogoUrl.copyWith(id: docRef.id);
+    await docRef.update({'id': docRef.id});
 
     // add to local list
-    _secrets.add(SecretKey(key: secret, id: docRef.id));
+    _secrets.add(secretWithFirebaseId);
 
     // update state
     state = AsyncValue.data(_secrets);
@@ -103,14 +124,20 @@ class Secret extends _$Secret {
 
       // read secrets from file
       final file = File(result.files.single.path!);
-      final secrets = await file.readAsLines();
+      final lines = await file.readAsLines();
+
+      int importedCount = 0;
 
       // add secrets to firestore
-      for (final secret in secrets) {
-        await addSecret(secret);
+      for (final line in lines) {
+        if (line.startsWith('otpauth://totp/')) {
+          final secret = _backupService.parseOtpUrl(line);
+          await addSecret(secret);
+          importedCount++;
+        }
       }
 
-      return secrets.length;
+      return importedCount;
     } catch (error) {
       rethrow;
     }
@@ -127,7 +154,9 @@ class Secret extends _$Secret {
       final file = File('${directory.path}/secrets.txt');
 
       // write secrets to file
-      await file.writeAsString(_secrets.map((secret) => secret.key).join('\n'));
+      final content = _secrets.map(_backupService.generateOtpUri).join('\n');
+
+      await file.writeAsString(content);
 
       // share the file
       await Share.shareXFiles([XFile(file.path)], text: 'My secret keys');

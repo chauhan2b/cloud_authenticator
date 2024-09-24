@@ -40,4 +40,9 @@ class FirebaseAuth extends _$FirebaseAuth {
     final authService = ref.read(authServiceProvider);
     return await authService.signOut();
   }
+
+  Future<void> resetPassword(String email) async {
+    final authService = ref.read(authServiceProvider);
+    return await authService.resetPassword(email);
+  }
 }
