@@ -21,7 +21,15 @@ class _TotpCodeState extends ConsumerState<TotpCode> {
     final code = ref.watch(totpProvider(widget.secret));
 
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 800),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+          child: child,
+        );
+      },
       child: _buildCodeRow(code),
     );
   }
