@@ -1,12 +1,14 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_authenticator/routes/auth_guard.dart';
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../screens/totp/totp_codes_screen.dart';
-import '../screens/totp/components/qr_view.dart';
+import '../screens/auth/password_reset_screen.dart';
 import '../screens/auth/signin_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/totp/components/qr_view.dart';
+import '../screens/totp/totp_codes_screen.dart';
+import 'auth_guard.dart';
 
 part 'app_router.gr.dart';
 part 'app_router.g.dart';
@@ -32,6 +34,7 @@ class AppRouter extends RootStackRouter {
       AutoRoute(page: SettingsRoute.page, path: '/settings'),
       AutoRoute(page: SignInRoute.page, path: '/sign-in'),
       AutoRoute(page: QRViewRoute.page, path: '/qr-view'),
+      AutoRoute(page: PasswordResetRoute.page, path: '/password-reset'),
     ];
   }
 }

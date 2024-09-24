@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_authenticator/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../providers/auth/auth_provider.dart';
 
 @RoutePage()
 class SignInScreen extends ConsumerStatefulWidget {
@@ -249,7 +250,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 10),
+                Visibility(
+                  visible: _isSigningIn,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        child: const Text('Forgot password?'),
+                        onPressed: () {
+                          context.router.pushNamed('/password-reset');
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: SizedBox(
